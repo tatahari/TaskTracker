@@ -57,7 +57,7 @@
         {% endif %}
     </td>
     <td class="px-6 py-4 whitespace-nowrap">
-        <span class="text-sm text-cool-gray-400 dark:text-cool-gray-500">Medium</span>
+        <span class="text-sm text-cool-gray-400 dark:text-cool-gray-500">{% if task.priority %}{{ task.priority.value }}{% else %}Medium{% endif %}</span>
     </td>
     <td class="px-6 py-4 whitespace-nowrap text-right">
         <div class="flex items-center justify-end space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">

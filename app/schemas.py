@@ -26,5 +26,22 @@ class Task(TaskBase):
     created_at: datetime
     updated_at: datetime
 
+# Configure Pydantic behavior at runtime so we don't define both
+# `Config` and `model_config` in the class body (which raises an error).
+
+try:
+    # pydantic v2's BaseModel exposes `model_config` attribute
+    from pydantic import BaseModel as _PydanticBase
+    _has_v2 = hasattr(_PydanticBase, "model_config")
+except Exception:
+    _has_v2 = False
+
+if _has_v2:
+    Task.model_config = {"from_attributes": True}
+else:
     class Config:
-        from_attributes = True
+        orm_mode = True
+
+    Task.Config = Config
+
+
