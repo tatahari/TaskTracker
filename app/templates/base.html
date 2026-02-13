@@ -118,6 +118,24 @@
         document.body.addEventListener('closeModal', function(evt) {
             window.dispatchEvent(new CustomEvent('close-modal'));
         });
+        // Fallback: if HTMX request completes but no swap happens (some environments),
+        // inject the response into the modal and open it.
+        document.body.addEventListener('htmx:afterRequest', function(evt) {
+            try {
+                var xhr = evt.detail.xhr;
+                var url = xhr && xhr.responseURL ? xhr.responseURL : (evt.detail.path || '');
+                if (!url) return;
+                if (url.indexOf('/tasks/new') !== -1) {
+                    var modal = document.getElementById('modal-content');
+                    if (modal && xhr && xhr.status === 200 && xhr.responseText) {
+                        modal.innerHTML = xhr.responseText;
+                        window.dispatchEvent(new CustomEvent('open-modal'));
+                    }
+                }
+            } catch (e) {
+                console.warn('htmx fallback failed', e);
+            }
+        });
     </script>
 </body>
 </html>
