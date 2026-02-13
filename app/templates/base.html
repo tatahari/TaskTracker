@@ -129,7 +129,21 @@
                     var modal = document.getElementById('modal-content');
                     if (modal && xhr && xhr.status === 200 && xhr.responseText) {
                         modal.innerHTML = xhr.responseText;
+                        // Try to open via Alpine event
                         window.dispatchEvent(new CustomEvent('open-modal'));
+                        // As a fallback (if Alpine isn't ready), force the modal visible
+                        try {
+                            var container = document.getElementById('modal-container');
+                            if (container) {
+                                container.classList.remove('hidden');
+                                container.style.display = 'flex';
+                                // ensure inner modal is visible
+                                var inner = container.querySelector('[x-show]');
+                                if (inner) inner.style.display = '';
+                            }
+                        } catch (e) {
+                            /* ignore */
+                        }
                     }
                 }
             } catch (e) {
