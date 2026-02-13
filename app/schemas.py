@@ -1,11 +1,12 @@
 from pydantic import BaseModel, HttpUrl, Field
 from typing import Optional, List
 from datetime import datetime
-from .models import TaskStatus
+from .models import TaskStatus, TaskPriority
 
 class TaskBase(BaseModel):
     name: str
     status: TaskStatus = TaskStatus.PENDING
+    priority: TaskPriority = TaskPriority.MEDIUM
     customer_name: Optional[str] = None
     stakeholders: Optional[str] = None
     useful_links: Optional[str] = None
@@ -18,6 +19,7 @@ class TaskCreate(TaskBase):
 class TaskUpdate(TaskBase):
     name: Optional[str] = None
     status: Optional[TaskStatus] = None
+    priority: Optional[TaskPriority] = None
 
 class Task(TaskBase):
     id: int

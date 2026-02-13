@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" :class="{ 'dark': dark }" x-data="{ dark: localStorage.getItem('dark') === 'true' }" x-init="$watch('dark', val => localStorage.setItem('dark', val))">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,66 +9,100 @@
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/static/css/style.css">
     <script>
         tailwind.config = {
+            darkMode: 'class',
             theme: {
                 extend: {
                     fontFamily: {
-                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                        sans: ['Poppins', 'system-ui', 'sans-serif'],
                     },
+                    colors: {
+                        'cool-gray': {
+                            50: '#f8fafc',
+                            100: '#f1f5f9',
+                            200: '#e2e8f0',
+                            300: '#cbd5e1',
+                            400: '#94a3b8',
+                            500: '#64748b',
+                            600: '#475569',
+                            700: '#334155',
+                            800: '#1e293b',
+                            900: '#0f172a',
+                        },
+                    }
                 }
             }
         }
     </script>
     <style>
-        * { font-family: 'Inter', system-ui, sans-serif; }
-        .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
-        .glass-effect { backdrop-filter: blur(10px); background: rgba(255,255,255,0.95); }
-        .hover-lift { transition: transform 0.2s ease, box-shadow 0.2s ease; }
-        .hover-lift:hover { transform: translateY(-2px); box-shadow: 0 12px 24px -8px rgba(0,0,0,0.15); }
-        .fade-in { animation: fadeIn 0.3s ease-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
-        .btn-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); transition: all 0.2s ease; }
-        .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4); }
-        .input-focus:focus { box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2); }
+        * { font-family: 'Poppins', system-ui, sans-serif; }
+        .fade-in { animation: fadeIn 0.5s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .btn-primary {
+            background-color: #4f46e5; /* indigo-600 */
+            transition: all 0.2s ease;
+        }
+        .btn-primary:hover {
+            background-color: #4338ca; /* indigo-700 */
+            box-shadow: 0 7px 15px -3px rgba(79, 70, 229, 0.4);
+        }
+        .htmx-settling select, .htmx-settling input, .htmx-settling button {
+            opacity: 0.5;
+            transition: opacity 300ms ease-in-out;
+        }
+        .htmx-request select, .htmx-request input, .htmx-request button {
+            opacity: 1;
+        }
+        /* Scrollbar Styles */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        .dark ::-webkit-scrollbar-thumb { background: #334155; }
+        .dark ::-webkit-scrollbar-thumb:hover { background: #475569; }
     </style>
 </head>
-<body class="bg-gradient-to-br from-slate-50 to-slate-100 text-gray-900 min-h-screen">
-    <nav class="gradient-bg shadow-lg sticky top-0 z-40">
+<body class="bg-cool-gray-50 dark:bg-cool-gray-900 text-cool-gray-900 dark:text-cool-gray-100 min-h-screen antialiased">
+    <nav class="bg-white/70 dark:bg-cool-gray-800/70 backdrop-blur-lg shadow-sm sticky top-0 z-40 border-b border-cool-gray-200/50 dark:border-cool-gray-700/50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16 items-center">
                 <div class="flex items-center space-x-3">
-                    <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+                    <div class="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
                         <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
                         </svg>
                     </div>
-                    <span class="text-2xl font-bold text-white tracking-tight">TaskTracker</span>
+                    <span class="text-2xl font-bold text-cool-gray-800 dark:text-white tracking-tight">TaskTracker</span>
                 </div>
                 <div class="flex items-center space-x-2">
-                    <a href="/exports/csv" class="px-4 py-2 text-white/90 hover:text-white hover:bg-white/10 rounded-lg font-medium transition-all flex items-center space-x-2">
+                    <a href="/exports/csv" class="px-3 py-2 text-cool-gray-600 dark:text-cool-gray-300 hover:text-cool-gray-900 dark:hover:text-white hover:bg-cool-gray-100 dark:hover:bg-cool-gray-700/50 rounded-lg font-medium transition-all flex items-center space-x-2 text-sm">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                         <span>CSV</span>
                     </a>
-                    <a href="/exports/excel" class="px-4 py-2 text-white/90 hover:text-white hover:bg-white/10 rounded-lg font-medium transition-all flex items-center space-x-2">
+                    <a href="/exports/excel" class="px-3 py-2 text-cool-gray-600 dark:text-cool-gray-300 hover:text-cool-gray-900 dark:hover:text-white hover:bg-cool-gray-100 dark:hover:bg-cool-gray-700/50 rounded-lg font-medium transition-all flex items-center space-x-2 text-sm">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                         <span>Excel</span>
                     </a>
+                    <button @click="dark = !dark" class="px-3 py-2 text-cool-gray-600 dark:text-cool-gray-300 hover:text-cool-gray-900 dark:hover:text-white hover:bg-cool-gray-100 dark:hover:bg-cool-gray-700/50 rounded-lg font-medium transition-all flex items-center space-x-2 text-sm">
+                        <svg x-show="!dark" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                        <svg x-show="dark" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                    </button>
                 </div>
             </div>
         </div>
     </nav>
 
-    <main class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8 fade-in">
-        <div id="messages"></div>
+    <main class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+        <div id="messages" class="mb-4"></div>
         {% block content %}{% endblock %}
     </main>
 
-    <div id="modal-container" class="fixed inset-0 z-50 flex items-center justify-center hidden" x-data="{ open: false }" @open-modal.window="open = true" @close-modal.window="open = false" :class="{ 'hidden': !open }">
-        <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" @click="open = false"></div>
-        <div class="glass-effect rounded-2xl shadow-2xl max-w-2xl w-full mx-4 relative z-10 fade-in border border-white/20" @click.away="open = false">
+    <div id="modal-container" class="fixed inset-0 z-50 flex items-center justify-center hidden" x-data="{ open: false }" @open-modal.window="open = true" @close-modal.window="open = false" x-show="open" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
+        <div class="absolute inset-0 bg-cool-gray-800/50" @click="open = false"></div>
+        <div class="bg-cool-gray-50 dark:bg-cool-gray-800 rounded-2xl shadow-2xl max-w-2xl w-full mx-4 relative z-10 border border-cool-gray-200/50 dark:border-cool-gray-700/50" @click.away="open = false" x-show="open" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95">
             <div id="modal-content"></div>
         </div>
     </div>
@@ -76,7 +110,9 @@
     <script>
         document.body.addEventListener('htmx:afterSwap', function(evt) {
             if (evt.detail.target.id === 'modal-content') {
-                window.dispatchEvent(new CustomEvent('open-modal'));
+                if (evt.detail.xhr.status === 200) {
+                    window.dispatchEvent(new CustomEvent('open-modal'));
+                }
             }
         });
         document.body.addEventListener('closeModal', function(evt) {
