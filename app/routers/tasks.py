@@ -64,16 +64,12 @@ def bulk_status(request: Request, task_ids: Annotated[List[int], Form()], status
     tasks = crud.get_tasks(db)
     return templates.TemplateResponse("task_list_rows.html", {"request": request, "tasks": tasks, "now": datetime.utcnow()})
 
-@router.get("/tasks", response_class=HTMLResponse)
-def list_tasks(request: Request, search: Optional[str] = None, status: Optional[str] = None, db: Session = Depends(get_db)):
-    tasks = crud.get_tasks(db, search=search, status=status)
-    return templates.TemplateResponse("task_list_rows.html", {"request": request, "tasks": tasks, "now": datetime.utcnow()})
-
 @router.post("/tasks", response_class=HTMLResponse)
 def create_task(
     request: Request,
     name: str = Form(...),
     status: str = Form(...),
+    priority: str = Form(...),
     customer_name: str = Form(None),
     stakeholders: str = Form(None),
     useful_links: str = Form(None),
@@ -84,6 +80,7 @@ def create_task(
     task_data = {
         "name": name,
         "status": status,
+        "priority": priority,
         "customer_name": customer_name,
         "stakeholders": stakeholders,
         "useful_links": useful_links,
@@ -92,7 +89,7 @@ def create_task(
     }
     crud.create_task(db, schemas.TaskCreate(**task_data))
     tasks = crud.get_tasks(db)
-    return templates.TemplateResponse("task_list.html", {"request": request, "tasks": tasks, "now": datetime.utcnow()})
+    return templates.TemplateResponse("task_list_rows.html", {"request": request, "tasks": tasks, "now": datetime.utcnow()})
 
 @router.get("/tasks/{task_id}", response_class=HTMLResponse)
 def task_detail(request: Request, task_id: int, db: Session = Depends(get_db)):
@@ -107,6 +104,7 @@ def update_task(
     task_id: int,
     name: str = Form(...),
     status: str = Form(...),
+    priority: str = Form(...),
     customer_name: str = Form(None),
     stakeholders: str = Form(None),
     useful_links: str = Form(None),
@@ -117,6 +115,7 @@ def update_task(
     task_data = {
         "name": name,
         "status": status,
+        "priority": priority,
         "customer_name": customer_name,
         "stakeholders": stakeholders,
         "useful_links": useful_links,
@@ -125,4 +124,4 @@ def update_task(
     }
     crud.update_task(db, task_id, schemas.TaskUpdate(**task_data))
     tasks = crud.get_tasks(db)
-    return templates.TemplateResponse("task_list.html", {"request": request, "tasks": tasks, "now": datetime.utcnow()})
+    return templates.TemplateResponse("task_list_rows.html", {"request": request, "tasks": tasks, "now": datetime.utcnow()})

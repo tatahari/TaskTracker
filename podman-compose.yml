@@ -1,16 +1,11 @@
 version: '3.8'
 
 services:
-  app:
+  web:
     build: .
-    container_name: task-tracker-app
     ports:
       - "8000:8000"
     volumes:
-      - task_data:/app/data
+      - ./sql_app.db:/code/sql_app.db
     environment:
-      - DATABASE_URL=sqlite:///./data/tasks.db
-    restart: always
-
-volumes:
-  task_data:
+      - DATABASE_URL=sqlite:///./sql_app.db
