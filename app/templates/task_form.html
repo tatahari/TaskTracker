@@ -25,7 +25,7 @@
     <form 
         hx-post="{% if task %}/tasks/{{ task.id }}{% else %}/tasks{% endif %}" 
         hx-target="#task-table-body" 
-        hx-on::after-request="if(event.detail.successful) { window.dispatchEvent(new CustomEvent('close-modal')); }"
+        hx-on::after-request="if(event.detail.successful) { try { htmx.ajax('GET','/tasks', {target:'#task-table-body'}); } catch(e){}; window.dispatchEvent(new CustomEvent('close-modal')); }"
         class="space-y-6"
     >
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
